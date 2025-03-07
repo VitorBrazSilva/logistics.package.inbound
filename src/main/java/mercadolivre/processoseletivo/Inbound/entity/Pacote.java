@@ -6,6 +6,7 @@ import lombok.*;
 import mercadolivre.processoseletivo.Inbound.enums.PacoteStatus;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -43,7 +44,7 @@ public class Pacote {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    private LocalDateTime estimatedDeliveryDate;
+    private LocalDate estimatedDeliveryDate;
 
     private boolean isHoliday;
 

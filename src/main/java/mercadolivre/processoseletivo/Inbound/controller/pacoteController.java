@@ -21,5 +21,4 @@ public class pacoteController {
         Pacote novoPacote = pacoteService.criarPacote(pacote);
         return ResponseEntity.ok(novoPacote);
     }
-
 }

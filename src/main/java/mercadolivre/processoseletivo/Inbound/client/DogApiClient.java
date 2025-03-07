@@ -1,6 +1,7 @@
 package mercadolivre.processoseletivo.Inbound.client;
 
-import mercadolivre.processoseletivo.Inbound.client.dto.dogApi.DogApiClientDto;
+
+import mercadolivre.processoseletivo.Inbound.client.dto.dogApi.DogFactResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,5 +10,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface DogApiClient {
 
     @GetMapping("/facts")
-    DogApiClientDto getRandomDogFact(@RequestParam("limit") int limit);
+    DogFactResponseDto getRandomDogFact(@RequestParam("limit") int limit);
 }

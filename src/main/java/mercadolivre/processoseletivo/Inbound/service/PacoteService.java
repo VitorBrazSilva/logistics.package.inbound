@@ -2,17 +2,16 @@ package mercadolivre.processoseletivo.Inbound.service;
 
 import lombok.RequiredArgsConstructor;
 import mercadolivre.processoseletivo.Inbound.client.DogApiClient;
-import mercadolivre.processoseletivo.Inbound.client.FeriadoClient;
-import mercadolivre.processoseletivo.Inbound.client.dto.dogApi.DogApiClientDto;
-import mercadolivre.processoseletivo.Inbound.client.dto.feriadoApi.FeriadoClientDto;
+import mercadolivre.processoseletivo.Inbound.client.HolidayClient;
+import mercadolivre.processoseletivo.Inbound.client.dto.dogApi.DogFactResponseDto;
+import mercadolivre.processoseletivo.Inbound.client.dto.holidayDto.HolidayResponseDto;
 import mercadolivre.processoseletivo.Inbound.entity.Pacote;
 import mercadolivre.processoseletivo.Inbound.enums.PacoteStatus;
 import mercadolivre.processoseletivo.Inbound.repository.PacoteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,15 +20,13 @@ import java.util.List;
 public class PacoteService {
 
     private final PacoteRepository pacoteRepository;
-    private final FeriadoClient feriadoClient;
+    private final HolidayClient holidayClient;
     private final DogApiClient dogApiClient;
 
     @Transactional
     public Pacote criarPacote(Pacote pacote) {
 
-        LocalDateTime estimatedDeliveryDate = pacote.getEstimatedDeliveryDate();
-
-        pacote.setHoliday(getIsHolliday(estimatedDeliveryDate));
+        pacote.setHoliday(getIsHollidayInBR(pacote.getEstimatedDeliveryDate()));
 
         pacote.setFunFact(getDogFactBody());
 
@@ -41,18 +38,20 @@ public class PacoteService {
     }
 
     private String getDogFactBody() {
-        DogApiClientDto response = dogApiClient.getRandomDogFact(1);
-        if (!response.getData().isEmpty()) {
-            return response.getData().getFirst().getAttributes().getBody();
-        }
-        return "Nenhum fato encontrado.";
+
+        DogFactResponseDto response = dogApiClient.getRandomDogFact(1);
+        return response.getFirstFact();
+
     }
 
-    private Boolean getIsHolliday(LocalDateTime estimatedDeliveryDate){
-        int ano = estimatedDeliveryDate.getYear();
-        List<FeriadoClientDto> feriados = feriadoClient.getFeriado(ano);
-        return feriados.stream()
-                .anyMatch(obj -> obj.getDate().equals(estimatedDeliveryDate));
-    }
+    private Boolean getIsHollidayInBR(LocalDate estimatedDeliveryDate){
 
+        int year = estimatedDeliveryDate.getYear();
+        List<HolidayResponseDto> holidays = holidayClient.getPublicHolidays(
+                year, "BR");
+
+       return holidays.stream()
+                .anyMatch(h -> h.getDate().equals(estimatedDeliveryDate));
+
+    }
 }
