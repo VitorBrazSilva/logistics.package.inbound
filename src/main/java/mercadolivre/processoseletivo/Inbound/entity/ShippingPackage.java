@@ -3,7 +3,7 @@ package mercadolivre.processoseletivo.Inbound.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import mercadolivre.processoseletivo.Inbound.enums.PacoteStatus;
+import mercadolivre.processoseletivo.Inbound.enums.ShippingPackageStatus;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
@@ -34,7 +34,7 @@ public class ShippingPackage {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PacoteStatus status;
+    private ShippingPackageStatus status;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -44,9 +44,12 @@ public class ShippingPackage {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    private LocalDateTime deliveredAt;
+
     private LocalDate estimatedDeliveryDate;
 
     private boolean isHoliday;
 
     private String funFact;
+
 }
