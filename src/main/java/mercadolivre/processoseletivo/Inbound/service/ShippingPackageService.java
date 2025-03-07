@@ -5,8 +5,11 @@ import mercadolivre.processoseletivo.Inbound.client.DogApiClient;
 import mercadolivre.processoseletivo.Inbound.client.HolidayClient;
 import mercadolivre.processoseletivo.Inbound.client.dto.dogApi.DogFactResponseDto;
 import mercadolivre.processoseletivo.Inbound.client.dto.holidayDto.HolidayResponseDto;
+import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageRequestDto;
+import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageResponseDto;
 import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
 import mercadolivre.processoseletivo.Inbound.enums.PacoteStatus;
+import mercadolivre.processoseletivo.Inbound.mapper.ShippingPackageMapper;
 import mercadolivre.processoseletivo.Inbound.repository.ShippingPackageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +25,12 @@ public class ShippingPackageService {
     private final ShippingPackageRepository shippingPackageRepository;
     private final HolidayClient holidayClient;
     private final DogApiClient dogApiClient;
+    private final ShippingPackageMapper shippingPackageMapper;
 
     @Transactional
-    public ShippingPackage createShippingPackageService(ShippingPackage shippingPackage) {
+    public ShippingPackageResponseDto createShippingPackageService(ShippingPackageRequestDto shippingPackageDto) {
+
+        ShippingPackage shippingPackage = shippingPackageMapper.toEntity(shippingPackageDto);
 
         shippingPackage.setHoliday(getIsHollidayInBR(shippingPackage.getEstimatedDeliveryDate()));
 
@@ -34,7 +40,8 @@ public class ShippingPackageService {
         shippingPackage.setCreatedAt(LocalDateTime.now());
         shippingPackage.setUpdatedAt(LocalDateTime.now());
 
-        return shippingPackageRepository.save(shippingPackage);
+        shippingPackageRepository.save(shippingPackage);
+        return shippingPackageMapper.toDTO(shippingPackage);
     }
 
     private String getDogFactBody() {

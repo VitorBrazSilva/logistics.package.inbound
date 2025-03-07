@@ -1,8 +1,10 @@
 package mercadolivre.processoseletivo.Inbound.controller;
 
 import lombok.RequiredArgsConstructor;
-import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
+import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageRequestDto;
+import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageResponseDto;
 import mercadolivre.processoseletivo.Inbound.service.ShippingPackageService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,8 +19,8 @@ public class ShippingPackageController {
     private final ShippingPackageService shippingPackageService;
 
     @PostMapping
-    public ResponseEntity<ShippingPackage> createShippingPackageService(@RequestBody ShippingPackage shippingPackage) {
-        ShippingPackage newShippingPackageService = shippingPackageService.createShippingPackageService(shippingPackage);
-        return ResponseEntity.ok(newShippingPackageService);
+    public ResponseEntity<ShippingPackageResponseDto> createShippingPackageService(@RequestBody ShippingPackageRequestDto shippingPackageDto) {
+        ShippingPackageResponseDto response = shippingPackageService.createShippingPackageService(shippingPackageDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
