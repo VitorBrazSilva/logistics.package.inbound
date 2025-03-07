@@ -43,7 +43,7 @@ public class Pacote {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    private LocalDateTime deliveredAt;
+    private LocalDateTime estimatedDeliveryDate;
 
     private boolean isHoliday;
 
