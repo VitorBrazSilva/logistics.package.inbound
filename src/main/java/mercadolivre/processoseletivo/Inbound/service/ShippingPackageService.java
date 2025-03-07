@@ -5,9 +5,9 @@ import mercadolivre.processoseletivo.Inbound.client.DogApiClient;
 import mercadolivre.processoseletivo.Inbound.client.HolidayClient;
 import mercadolivre.processoseletivo.Inbound.client.dto.dogApi.DogFactResponseDto;
 import mercadolivre.processoseletivo.Inbound.client.dto.holidayDto.HolidayResponseDto;
-import mercadolivre.processoseletivo.Inbound.entity.Pacote;
+import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
 import mercadolivre.processoseletivo.Inbound.enums.PacoteStatus;
-import mercadolivre.processoseletivo.Inbound.repository.PacoteRepository;
+import mercadolivre.processoseletivo.Inbound.repository.ShippingPackageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,24 +17,24 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PacoteService {
+public class ShippingPackageService {
 
-    private final PacoteRepository pacoteRepository;
+    private final ShippingPackageRepository shippingPackageRepository;
     private final HolidayClient holidayClient;
     private final DogApiClient dogApiClient;
 
     @Transactional
-    public Pacote criarPacote(Pacote pacote) {
+    public ShippingPackage createShippingPackageService(ShippingPackage shippingPackage) {
 
-        pacote.setHoliday(getIsHollidayInBR(pacote.getEstimatedDeliveryDate()));
+        shippingPackage.setHoliday(getIsHollidayInBR(shippingPackage.getEstimatedDeliveryDate()));
 
-        pacote.setFunFact(getDogFactBody());
+        shippingPackage.setFunFact(getDogFactBody());
 
-        pacote.setStatus(PacoteStatus.CREATED);
-        pacote.setCreatedAt(LocalDateTime.now());
-        pacote.setUpdatedAt(LocalDateTime.now());
+        shippingPackage.setStatus(PacoteStatus.CREATED);
+        shippingPackage.setCreatedAt(LocalDateTime.now());
+        shippingPackage.setUpdatedAt(LocalDateTime.now());
 
-        return pacoteRepository.save(pacote);
+        return shippingPackageRepository.save(shippingPackage);
     }
 
     private String getDogFactBody() {

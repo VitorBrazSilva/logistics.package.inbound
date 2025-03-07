@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "pacotes")
+@Table(name = "shippingpackage")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 
-public class Pacote {
+public class ShippingPackage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
