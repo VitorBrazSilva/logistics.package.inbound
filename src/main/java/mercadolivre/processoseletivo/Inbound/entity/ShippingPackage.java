@@ -17,7 +17,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class ShippingPackage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

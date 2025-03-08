@@ -6,16 +6,21 @@ import mercadolivre.processoseletivo.Inbound.client.DogApiClient;
 import mercadolivre.processoseletivo.Inbound.client.HolidayClient;
 import mercadolivre.processoseletivo.Inbound.client.dto.dogApi.DogFactResponseDto;
 import mercadolivre.processoseletivo.Inbound.client.dto.holidayDto.HolidayResponseDto;
+import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageEventsResponseDto;
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageRequestDto;
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageResponseDto;
+import mercadolivre.processoseletivo.Inbound.controller.dto.TrackingEventPackageResponse;
 import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
 import mercadolivre.processoseletivo.Inbound.enums.ShippingPackageStatus;
 import mercadolivre.processoseletivo.Inbound.mapper.ShippingPackageMapper;
 import mercadolivre.processoseletivo.Inbound.repository.ShippingPackageRepository;
+import mercadolivre.processoseletivo.Inbound.repository.TrackingEvenRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +32,7 @@ public class ShippingPackageService {
     private final HolidayClient holidayClient;
     private final DogApiClient dogApiClient;
     private final ShippingPackageMapper shippingPackageMapper;
+    private final TrackingEvenRepository trackingEvenRepository;
 
 
     public ShippingPackageResponseDto createShippingPackageService(ShippingPackageRequestDto shippingPackageDto) {
@@ -42,7 +48,7 @@ public class ShippingPackageService {
         shippingPackage.setUpdatedAt(LocalDateTime.now());
 
         shippingPackageRepository.save(shippingPackage);
-        return shippingPackageMapper.toDTO(shippingPackage);
+        return new ShippingPackageResponseDto(shippingPackage);
     }
 
     public ShippingPackageResponseDto updateStatus(UUID id, ShippingPackageStatus newStatus) {
@@ -61,7 +67,27 @@ public class ShippingPackageService {
         }
 
         shippingPackageRepository.save(shippingPackage);
-        return shippingPackageMapper.toDTO(shippingPackage);
+        return new ShippingPackageResponseDto(shippingPackage);
+    }
+
+    @Transactional(readOnly = true)
+    public ShippingPackageEventsResponseDto getShippingPackage(UUID id, boolean includeEvents) {
+        ShippingPackage shippingPackage = shippingPackageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Package not found"));
+
+        List<TrackingEventPackageResponse> events = includeEvents
+                ? trackingEvenRepository.findByShippingPackage(shippingPackage).stream()
+                .map(TrackingEventPackageResponse::new)
+                .toList()
+                : Collections.emptyList();
+
+        return new ShippingPackageEventsResponseDto(shippingPackage, events);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShippingPackageResponseDto> listPackage(String sender, String recipient) {
+        List<ShippingPackage> shippingPackage = shippingPackageRepository.filterShippingPackage(sender, recipient);
+        return shippingPackage.stream().map(ShippingPackageResponseDto::new).toList();
     }
 
 
