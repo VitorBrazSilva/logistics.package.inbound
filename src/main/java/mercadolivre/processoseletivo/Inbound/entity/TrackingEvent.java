@@ -19,7 +19,8 @@ import java.util.UUID;
 public class TrackingEvent {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "UUID")
+    @Column(updatable = false, nullable = false)
     private UUID id;
 
     @ManyToOne

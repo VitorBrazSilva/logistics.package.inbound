@@ -13,7 +13,6 @@ import mercadolivre.processoseletivo.Inbound.enums.ShippingPackageStatus;
 import mercadolivre.processoseletivo.Inbound.mapper.ShippingPackageMapper;
 import mercadolivre.processoseletivo.Inbound.repository.ShippingPackageRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,7 +28,7 @@ public class ShippingPackageService {
     private final DogApiClient dogApiClient;
     private final ShippingPackageMapper shippingPackageMapper;
 
-    @Transactional
+
     public ShippingPackageResponseDto createShippingPackageService(ShippingPackageRequestDto shippingPackageDto) {
 
         ShippingPackage shippingPackage = shippingPackageMapper.toEntity(shippingPackageDto);

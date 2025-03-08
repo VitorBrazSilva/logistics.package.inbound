@@ -16,16 +16,8 @@ public class TrackingEventController {
 
     @PostMapping
     public ResponseEntity<Void> createEvent(@RequestBody TrackingEventRequestDto trackingEventRequestDto) {
-
-        try {
-            trackingEventService.createEvent(trackingEventRequestDto);
-
-        } catch (Exception e) {
-            System.err.println("Erro inesperado: " + e.getMessage());
-            throw new RuntimeException("Erro ao salvar o evento.", e);
-        }
-
-        return null;
+        trackingEventService.createEvent(trackingEventRequestDto);
+        return ResponseEntity.noContent().build();
     }
 
 }
