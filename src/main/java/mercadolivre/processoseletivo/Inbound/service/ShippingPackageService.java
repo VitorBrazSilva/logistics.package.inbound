@@ -6,6 +6,7 @@ import mercadolivre.processoseletivo.Inbound.client.DogApiClient;
 import mercadolivre.processoseletivo.Inbound.client.HolidayClient;
 import mercadolivre.processoseletivo.Inbound.client.dto.dogApi.DogFactResponseDto;
 import mercadolivre.processoseletivo.Inbound.client.dto.holidayDto.HolidayResponseDto;
+import mercadolivre.processoseletivo.Inbound.config.RabbitMQConfig;
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageEventsResponseDto;
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageRequestDto;
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageResponseDto;
@@ -33,21 +34,18 @@ public class ShippingPackageService {
     private final DogApiClient dogApiClient;
     private final ShippingPackageMapper shippingPackageMapper;
     private final TrackingEvenRepository trackingEvenRepository;
+    private final RabbitMQMessagePublisher rabbitMQMessagePublisher;
 
-
+    @Transactional
     public ShippingPackageResponseDto createShippingPackageService(ShippingPackageRequestDto shippingPackageDto) {
 
         ShippingPackage shippingPackage = shippingPackageMapper.toEntity(shippingPackageDto);
 
-        shippingPackage.setHoliday(getIsHollidayInBR(shippingPackage.getEstimatedDeliveryDate()));
-
-        shippingPackage.setFunFact(getDogFactBody());
-
         shippingPackage.setStatus(ShippingPackageStatus.CREATED);
-        shippingPackage.setCreatedAt(LocalDateTime.now());
-        shippingPackage.setUpdatedAt(LocalDateTime.now());
 
         shippingPackageRepository.save(shippingPackage);
+        rabbitMQMessagePublisher.sendPackageCreated(shippingPackage, RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_HOLIDAY);
+
         return new ShippingPackageResponseDto(shippingPackage);
     }
 
@@ -88,6 +86,24 @@ public class ShippingPackageService {
     public List<ShippingPackageResponseDto> listPackage(String sender, String recipient) {
         List<ShippingPackage> shippingPackage = shippingPackageRepository.filterShippingPackage(sender, recipient);
         return shippingPackage.stream().map(ShippingPackageResponseDto::new).toList();
+    }
+
+    @Transactional()
+    public Void updateHolliday(ShippingPackage shippingPackage) {
+
+        shippingPackage.setHoliday(getIsHollidayInBR(shippingPackage.getEstimatedDeliveryDate()));
+        shippingPackageRepository.save(shippingPackage);
+        rabbitMQMessagePublisher.sendPackageCreated(shippingPackage, RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_FUNFACT);
+        return null;
+    }
+
+    @Transactional()
+    public Void updateFunFact(ShippingPackage shippingPackage) {
+
+        shippingPackage.setFunFact(getDogFactBody());
+        shippingPackageRepository.save(shippingPackage);
+
+        return null;
     }
 
 

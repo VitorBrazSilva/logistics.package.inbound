@@ -20,3 +20,14 @@ services:
       - "8081:80"
     depends_on:
       - mysql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: melimais-rabbitmq
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: 'melimais'
+      RABBITMQ_DEFAULT_PASS: 'melimais'
+    ports:
+      - 5672:5672
+      - 15672:15672
