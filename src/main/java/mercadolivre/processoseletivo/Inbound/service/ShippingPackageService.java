@@ -15,7 +15,7 @@ import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
 import mercadolivre.processoseletivo.Inbound.enums.ShippingPackageStatus;
 import mercadolivre.processoseletivo.Inbound.mapper.ShippingPackageMapper;
 import mercadolivre.processoseletivo.Inbound.repository.ShippingPackageRepository;
-import mercadolivre.processoseletivo.Inbound.repository.TrackingEvenRepository;
+import mercadolivre.processoseletivo.Inbound.repository.TrackingEventRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +33,7 @@ public class ShippingPackageService {
     private final ShippingPackageRepository shippingPackageRepository;
     private final DogApiClient dogApiClient;
     private final ShippingPackageMapper shippingPackageMapper;
-    private final TrackingEvenRepository trackingEvenRepository;
+    private final TrackingEventRepository trackingEventRepository;
     private final RabbitMQMessagePublisher rabbitMQMessagePublisher;
     private final HollidaysService hollidaysService;
 
@@ -75,7 +75,7 @@ public class ShippingPackageService {
                 .orElseThrow(() -> new EntityNotFoundException("Package not found"));
 
         List<TrackingEventPackageResponse> events = includeEvents
-                ? trackingEvenRepository.findByShippingPackage(shippingPackage).stream()
+                ? trackingEventRepository.findByShippingPackage(shippingPackage).stream()
                 .map(TrackingEventPackageResponse::new)
                 .toList()
                 : Collections.emptyList();

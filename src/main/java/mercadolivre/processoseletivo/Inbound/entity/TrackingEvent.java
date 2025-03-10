@@ -35,6 +35,6 @@ public class TrackingEvent {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime createdAt;
 
 }

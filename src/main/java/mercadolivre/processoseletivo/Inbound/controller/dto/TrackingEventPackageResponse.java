@@ -22,6 +22,6 @@ public class TrackingEventPackageResponse {
         this.shipping_package_id = event.getShippingPackage().getId();
         this.location = event.getLocation();
         this.description = event.getDescription();
-        this.date = event.getDate();
+        this.date = event.getCreatedAt();
     }
 }

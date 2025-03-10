@@ -6,7 +6,7 @@ import mercadolivre.processoseletivo.Inbound.controller.dto.TrackingEventRequest
 import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
 import mercadolivre.processoseletivo.Inbound.entity.TrackingEvent;
 import mercadolivre.processoseletivo.Inbound.repository.ShippingPackageRepository;
-import mercadolivre.processoseletivo.Inbound.repository.TrackingEvenRepository;
+import mercadolivre.processoseletivo.Inbound.repository.TrackingEventRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class TrackingEventService {
 
     private final ShippingPackageRepository shippingPackageRepository;
-    private final TrackingEvenRepository trackingEvenRepository;
+    private final TrackingEventRepository trackingEventRepository;
 
     @Transactional
     public void createEvent(TrackingEventRequestDto trackingEventRequestDto) {
@@ -28,8 +28,8 @@ public class TrackingEventService {
         trackingEvent.setShippingPackage(shippingPackage);
         trackingEvent.setLocation(trackingEventRequestDto.getLocation());
         trackingEvent.setDescription(trackingEventRequestDto.getDescription());
-        trackingEvent.setDate(LocalDateTime.now());
-        trackingEvenRepository.save(trackingEvent);
+        trackingEvent.setCreatedAt(LocalDateTime.now());
+        trackingEventRepository.save(trackingEvent);
 
     }
 }
