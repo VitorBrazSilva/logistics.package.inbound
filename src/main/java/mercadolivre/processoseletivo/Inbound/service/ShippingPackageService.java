@@ -2,6 +2,7 @@ package mercadolivre.processoseletivo.Inbound.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mercadolivre.processoseletivo.Inbound.client.DogApiClient;
 import mercadolivre.processoseletivo.Inbound.client.dto.dogApi.DogFactResponseDto;
 import mercadolivre.processoseletivo.Inbound.client.dto.holidayDto.HolidayResponseDto;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ShippingPackageService {
 
     private final ShippingPackageRepository shippingPackageRepository;
@@ -92,6 +94,7 @@ public class ShippingPackageService {
 
         shippingPackage.setHoliday(getIsHollidayInBR(shippingPackage.getEstimatedDeliveryDate()));
         shippingPackageRepository.save(shippingPackage);
+        log.info("🎄 Holiday updated successfully: {}", shippingPackage.getId() );
         rabbitMQMessagePublisher.sendPackageCreated(shippingPackage, RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_FUNFACT);
     }
 
@@ -100,6 +103,7 @@ public class ShippingPackageService {
 
         shippingPackage.setFunFact(getDogFactBody());
         shippingPackageRepository.save(shippingPackage);
+        log.info("🐶 Fun fact updated successfully: {}", shippingPackage.getId());
     }
 
 
