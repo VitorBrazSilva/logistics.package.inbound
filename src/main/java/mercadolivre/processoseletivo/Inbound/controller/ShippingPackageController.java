@@ -1,5 +1,6 @@
 package mercadolivre.processoseletivo.Inbound.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageEventsResponseDto;
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageRequestDto;
@@ -29,13 +30,13 @@ public class ShippingPackageController {
     private final ShippingPackageService shippingPackageService;
 
     @PostMapping
-    public ResponseEntity<ShippingPackageResponseDto> createShippingPackageService(@RequestBody ShippingPackageRequestDto shippingPackageDto) {
+    public ResponseEntity<ShippingPackageResponseDto> createShippingPackageService(@RequestBody @Valid ShippingPackageRequestDto shippingPackageDto) {
         ShippingPackageResponseDto response = shippingPackageService.createShippingPackageService(shippingPackageDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<ShippingPackageResponseDto> updateStatus(@PathVariable UUID id, @RequestBody UpdateStatusRequestDto newStatus) {
+    public ResponseEntity<ShippingPackageResponseDto> updateStatus(@PathVariable UUID id, @RequestBody @Valid UpdateStatusRequestDto newStatus) {
         ShippingPackageResponseDto packageStatusUpdated = shippingPackageService.updateStatus(id, newStatus.getStatus());
         return ResponseEntity.ok(packageStatusUpdated);
     }

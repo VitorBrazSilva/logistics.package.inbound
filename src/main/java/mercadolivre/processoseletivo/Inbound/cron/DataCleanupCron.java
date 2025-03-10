@@ -19,9 +19,9 @@ public class DataCleanupCron {
     private final PurgeService purgeService;
 
     @Transactional
-    @Scheduled(fixedDelay = 20000)
+    @Scheduled(cron = "0 0 3 * * ?")
     public void purgeOldEvents() {
-        LocalDateTime limit = LocalDateTime.now().minusMonths(1);
+        LocalDateTime limit = LocalDateTime.now().minusMonths(3);
 
         log.info("🔍 Fetching events for backup before purge...");
         List<TrackingEvent> events = purgeService.findByEventsOld(limit);
