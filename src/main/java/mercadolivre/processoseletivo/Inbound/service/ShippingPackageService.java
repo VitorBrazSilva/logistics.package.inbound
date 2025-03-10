@@ -3,7 +3,6 @@ package mercadolivre.processoseletivo.Inbound.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import mercadolivre.processoseletivo.Inbound.client.DogApiClient;
-import mercadolivre.processoseletivo.Inbound.client.HolidayClient;
 import mercadolivre.processoseletivo.Inbound.client.dto.dogApi.DogFactResponseDto;
 import mercadolivre.processoseletivo.Inbound.client.dto.holidayDto.HolidayResponseDto;
 import mercadolivre.processoseletivo.Inbound.config.RabbitMQConfig;
@@ -30,11 +29,11 @@ import java.util.UUID;
 public class ShippingPackageService {
 
     private final ShippingPackageRepository shippingPackageRepository;
-    private final HolidayClient holidayClient;
     private final DogApiClient dogApiClient;
     private final ShippingPackageMapper shippingPackageMapper;
     private final TrackingEvenRepository trackingEvenRepository;
     private final RabbitMQMessagePublisher rabbitMQMessagePublisher;
+    private final HollidaysService hollidaysService;
 
     @Transactional
     public ShippingPackageResponseDto createShippingPackageService(ShippingPackageRequestDto shippingPackageDto) {
@@ -71,7 +70,7 @@ public class ShippingPackageService {
     @Transactional(readOnly = true)
     public ShippingPackageEventsResponseDto getShippingPackage(UUID id, boolean includeEvents) {
         ShippingPackage shippingPackage = shippingPackageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Package not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Package not found"));
 
         List<TrackingEventPackageResponse> events = includeEvents
                 ? trackingEvenRepository.findByShippingPackage(shippingPackage).stream()
@@ -89,21 +88,18 @@ public class ShippingPackageService {
     }
 
     @Transactional()
-    public Void updateHolliday(ShippingPackage shippingPackage) {
+    public void updateHolliday(ShippingPackage shippingPackage) {
 
         shippingPackage.setHoliday(getIsHollidayInBR(shippingPackage.getEstimatedDeliveryDate()));
         shippingPackageRepository.save(shippingPackage);
         rabbitMQMessagePublisher.sendPackageCreated(shippingPackage, RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_FUNFACT);
-        return null;
     }
 
     @Transactional()
-    public Void updateFunFact(ShippingPackage shippingPackage) {
+    public void updateFunFact(ShippingPackage shippingPackage) {
 
         shippingPackage.setFunFact(getDogFactBody());
         shippingPackageRepository.save(shippingPackage);
-
-        return null;
     }
 
 
@@ -114,13 +110,12 @@ public class ShippingPackageService {
 
     }
 
+
     private Boolean getIsHollidayInBR(LocalDate estimatedDeliveryDate){
 
         int year = estimatedDeliveryDate.getYear();
-        List<HolidayResponseDto> holidays = holidayClient.getPublicHolidays(
-                year, "BR");
-
-       return holidays.stream()
+        List<HolidayResponseDto> holidays = hollidaysService.getHolidays(year, "BR");
+        return holidays.stream()
                 .anyMatch(h -> h.getDate().equals(estimatedDeliveryDate));
 
     }
