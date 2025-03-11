@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
+import mercadolivre.processoseletivo.Inbound.entity.TrackingEvent;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,8 +23,12 @@ public class ShippingPackageEventsResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<TrackingEventPackageResponse> events;
+    private int page;
+    private int size;
+    private long totalElements;
+    private int totalPages;
 
-    public ShippingPackageEventsResponseDto(ShippingPackage shippingPackage, List<TrackingEventPackageResponse> events) {
+    public ShippingPackageEventsResponseDto(ShippingPackage shippingPackage, Page<TrackingEvent> eventsPage) {
         this.id = shippingPackage.getId();
         this.description = shippingPackage.getDescription();
         this.sender = shippingPackage.getSender();
@@ -30,7 +36,10 @@ public class ShippingPackageEventsResponseDto {
         this.status = shippingPackage.getStatus().name();
         this.createdAt = shippingPackage.getCreatedAt();
         this.updatedAt = shippingPackage.getUpdatedAt();
-        this.events = events;
+        this.events = eventsPage.getContent().stream().map(TrackingEventPackageResponse::new).toList();
+        this.page = eventsPage.getNumber();
+        this.size = eventsPage.getSize();
+        this.totalElements = eventsPage.getTotalElements();
+        this.totalPages = eventsPage.getTotalPages();
     }
-
 }

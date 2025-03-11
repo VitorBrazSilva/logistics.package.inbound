@@ -12,10 +12,15 @@ import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageReque
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageResponseDto;
 import mercadolivre.processoseletivo.Inbound.controller.dto.TrackingEventPackageResponse;
 import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
+import mercadolivre.processoseletivo.Inbound.entity.TrackingEvent;
 import mercadolivre.processoseletivo.Inbound.enums.ShippingPackageStatus;
 import mercadolivre.processoseletivo.Inbound.mapper.ShippingPackageMapper;
 import mercadolivre.processoseletivo.Inbound.repository.ShippingPackageRepository;
 import mercadolivre.processoseletivo.Inbound.repository.TrackingEventRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,17 +75,17 @@ public class ShippingPackageService {
     }
 
     @Transactional(readOnly = true)
-    public ShippingPackageEventsResponseDto getShippingPackage(UUID id, boolean includeEvents) {
+    public ShippingPackageEventsResponseDto getShippingPackage(UUID id, boolean includeEvents, int page, int size) {
         ShippingPackage shippingPackage = shippingPackageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Package not found"));
 
-        List<TrackingEventPackageResponse> events = includeEvents
-                ? trackingEventRepository.findByShippingPackage(shippingPackage).stream()
-                .map(TrackingEventPackageResponse::new)
-                .toList()
-                : Collections.emptyList();
+        Page<TrackingEvent> eventsPage = Page.empty();
+        if (includeEvents) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            eventsPage = trackingEventRepository.findByShippingPackage(shippingPackage, pageable);
+        }
 
-        return new ShippingPackageEventsResponseDto(shippingPackage, events);
+        return new ShippingPackageEventsResponseDto(shippingPackage, eventsPage);
     }
 
     @Transactional(readOnly = true)

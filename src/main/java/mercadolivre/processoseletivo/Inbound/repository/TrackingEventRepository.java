@@ -3,6 +3,8 @@ package mercadolivre.processoseletivo.Inbound.repository;
 import feign.Param;
 import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
 import mercadolivre.processoseletivo.Inbound.entity.TrackingEvent;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +17,7 @@ import java.util.UUID;
 @Repository
 public interface TrackingEventRepository extends JpaRepository<TrackingEvent, UUID> {
 
-    List<TrackingEvent> findByShippingPackage(ShippingPackage shippingPackage);
+    Page<TrackingEvent> findByShippingPackage(ShippingPackage shippingPackage, Pageable pageable);
     List<TrackingEvent> findByCreatedAtBefore(LocalDateTime limit);
 
     @Modifying

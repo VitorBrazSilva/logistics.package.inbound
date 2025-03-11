@@ -45,9 +45,11 @@ public class ShippingPackageController {
     @GetMapping("/{id}")
     public ResponseEntity<ShippingPackageEventsResponseDto> getShippingPackage(
             @PathVariable UUID id,
-            @RequestParam(defaultValue = "true") boolean includeEvents) {
+            @RequestParam(defaultValue = "true") boolean includeEvents,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        ShippingPackageEventsResponseDto response = shippingPackageService.getShippingPackage(id, includeEvents);
+        ShippingPackageEventsResponseDto response = shippingPackageService.getShippingPackage(id, includeEvents, page, size);
         return ResponseEntity.ok(response);
     }
 
