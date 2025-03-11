@@ -10,7 +10,6 @@ import mercadolivre.processoseletivo.Inbound.config.RabbitMQConfig;
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageEventsResponseDto;
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageRequestDto;
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageResponseDto;
-import mercadolivre.processoseletivo.Inbound.controller.dto.TrackingEventPackageResponse;
 import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
 import mercadolivre.processoseletivo.Inbound.entity.TrackingEvent;
 import mercadolivre.processoseletivo.Inbound.enums.ShippingPackageStatus;
@@ -21,12 +20,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +41,7 @@ public class ShippingPackageService {
     private final RabbitMQMessagePublisher rabbitMQMessagePublisher;
     private final HollidaysService hollidaysService;
 
+
     @Transactional
     public ShippingPackageResponseDto createShippingPackageService(ShippingPackageRequestDto shippingPackageDto) {
 
@@ -52,7 +52,7 @@ public class ShippingPackageService {
         shippingPackage.setUpdatedAt(LocalDateTime.now());
 
         shippingPackageRepository.save(shippingPackage);
-        rabbitMQMessagePublisher.sendPackageCreated(shippingPackage, RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_HOLIDAY);
+        sendPackageCreatedAsync(shippingPackage);
 
         return new ShippingPackageResponseDto(shippingPackage);
     }
@@ -136,5 +136,10 @@ public class ShippingPackageService {
         return (currentStatus == ShippingPackageStatus.CREATED && newStatus == ShippingPackageStatus.IN_TRANSIT) ||
                 (currentStatus == ShippingPackageStatus.IN_TRANSIT && newStatus == ShippingPackageStatus.DELIVERED) ||
                 (currentStatus == ShippingPackageStatus.CREATED && newStatus == ShippingPackageStatus.CANCELED);
+    }
+
+    @Async
+    protected void sendPackageCreatedAsync(ShippingPackage shippingPackage) {
+        rabbitMQMessagePublisher.sendPackageCreated(shippingPackage, RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_HOLIDAY);
     }
 }
