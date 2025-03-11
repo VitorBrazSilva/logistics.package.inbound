@@ -1,4 +1,16 @@
 services:
+  meli-inbound-app:
+    container_name: 'meli-inbound-app'
+    image: 'meli-inbound-app:latest'
+    build:
+      context: .
+    environment:
+      - 'SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mydatabase?useSSL=false&serverTimezone=UTC&autoReconnect=true&failOverReadOnly=false&maxReconnects=3'
+      - 'SPRING_RABBITMQ_HOST=rabbitmq'
+      - 'SPRING_DATA_REDIS_HOST=redis'
+    ports:
+      - '8080:8080'
+
   mysql:
     container_name: 'guide-mysql'
     image: 'mysql:latest'
