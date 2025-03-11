@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mercadolivre.processoseletivo.Inbound.controller.dto.TrackingEventRequestDto;
 import mercadolivre.processoseletivo.Inbound.service.TrackingEventService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class TrackingEventController {
     @PostMapping
     public ResponseEntity<Void> createEvent(@RequestBody @Valid TrackingEventRequestDto trackingEventRequestDto) {
         trackingEventService.createEvent(trackingEventRequestDto);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 }
