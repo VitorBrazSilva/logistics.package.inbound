@@ -1,6 +1,7 @@
 package mercadolivre.processoseletivo.Inbound.entity;
 
 
+
 import jakarta.persistence.*;
 import lombok.*;
 import mercadolivre.processoseletivo.Inbound.enums.ShippingPackageStatus;
@@ -11,12 +12,17 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "shipping_package")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "shipping_package",
+        indexes = {
+                @Index(name = "idx_sender", columnList = "sender"),
+                @Index(name = "idx_recipient", columnList = "recipient"),
+                @Index(name = "idx_sender_recipient", columnList = "sender, recipient")
+        })
 public class ShippingPackage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -7,6 +7,7 @@ import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageReque
 import mercadolivre.processoseletivo.Inbound.controller.dto.ShippingPackageResponseDto;
 import mercadolivre.processoseletivo.Inbound.controller.dto.UpdateStatusRequestDto;
 import mercadolivre.processoseletivo.Inbound.service.ShippingPackageService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
