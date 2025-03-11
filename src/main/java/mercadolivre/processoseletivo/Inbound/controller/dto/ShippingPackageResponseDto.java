@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
+import mercadolivre.processoseletivo.Inbound.enums.ShippingPackageStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class ShippingPackageResponseDto {
     private String description;
     private String sender;
     private String recipient;
-    private String status;
+    private ShippingPackageStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isHoliday;
@@ -30,7 +31,7 @@ public class ShippingPackageResponseDto {
         this.description = shippingPackage.getDescription();
         this.sender = shippingPackage.getSender();
         this.recipient = shippingPackage.getRecipient();
-        this.status = shippingPackage.getStatus().name();
+        this.status = shippingPackage.getStatus();
         this.createdAt = shippingPackage.getCreatedAt();
         this.updatedAt = shippingPackage.getUpdatedAt();
         this.isHoliday = shippingPackage.getIsHoliday();

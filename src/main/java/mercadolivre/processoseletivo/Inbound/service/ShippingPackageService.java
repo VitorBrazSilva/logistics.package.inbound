@@ -44,8 +44,14 @@ public class ShippingPackageService {
 
     @Transactional
     public ShippingPackageResponseDto createShippingPackageService(ShippingPackageRequestDto shippingPackageDto) {
+        if (shippingPackageDto == null) {
+            throw new IllegalArgumentException("Request cannot be null");
+        }
 
         ShippingPackage shippingPackage = shippingPackageMapper.toEntity(shippingPackageDto);
+        if (shippingPackage == null) {
+            throw new IllegalStateException("Failed to map request to entity");
+        }
 
         shippingPackage.setStatus(ShippingPackageStatus.CREATED);
         shippingPackage.setCreatedAt(LocalDateTime.now());
@@ -139,7 +145,7 @@ public class ShippingPackageService {
     }
 
     @Async
-    protected void sendPackageCreatedAsync(ShippingPackage shippingPackage) {
+    public void sendPackageCreatedAsync(ShippingPackage shippingPackage) {
         rabbitMQMessagePublisher.sendPackageCreated(shippingPackage, RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_HOLIDAY);
     }
 }
