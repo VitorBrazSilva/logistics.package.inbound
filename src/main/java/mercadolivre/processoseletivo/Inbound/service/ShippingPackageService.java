@@ -48,6 +48,8 @@ public class ShippingPackageService {
         ShippingPackage shippingPackage = shippingPackageMapper.toEntity(shippingPackageDto);
 
         shippingPackage.setStatus(ShippingPackageStatus.CREATED);
+        shippingPackage.setCreatedAt(LocalDateTime.now());
+        shippingPackage.setUpdatedAt(LocalDateTime.now());
 
         shippingPackageRepository.save(shippingPackage);
         rabbitMQMessagePublisher.sendPackageCreated(shippingPackage, RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_HOLIDAY);
@@ -97,7 +99,7 @@ public class ShippingPackageService {
     @Transactional()
     public void updateHolliday(ShippingPackage shippingPackage) {
 
-        shippingPackage.setHoliday(getIsHollidayInBR(shippingPackage.getEstimatedDeliveryDate()));
+        shippingPackage.setIsHoliday(getIsHollidayInBR(shippingPackage.getEstimatedDeliveryDate()));
         shippingPackageRepository.save(shippingPackage);
         log.info("🎄 Holiday updated successfully: {}", shippingPackage.getId() );
         rabbitMQMessagePublisher.sendPackageCreated(shippingPackage, RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_FUNFACT);
@@ -129,9 +131,10 @@ public class ShippingPackageService {
 
     }
 
-    private boolean isStatusUpdatable(ShippingPackageStatus currentStatus
+    private Boolean isStatusUpdatable(ShippingPackageStatus currentStatus
             , ShippingPackageStatus newStatus) {
         return (currentStatus == ShippingPackageStatus.CREATED && newStatus == ShippingPackageStatus.IN_TRANSIT) ||
-                (currentStatus == ShippingPackageStatus.IN_TRANSIT && newStatus == ShippingPackageStatus.DELIVERED);
+                (currentStatus == ShippingPackageStatus.IN_TRANSIT && newStatus == ShippingPackageStatus.DELIVERED) ||
+                (currentStatus == ShippingPackageStatus.CREATED && newStatus == ShippingPackageStatus.CANCELED);
     }
 }

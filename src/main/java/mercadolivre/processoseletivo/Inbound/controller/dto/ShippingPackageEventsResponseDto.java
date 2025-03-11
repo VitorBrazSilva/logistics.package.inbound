@@ -7,6 +7,7 @@ import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
 import mercadolivre.processoseletivo.Inbound.entity.TrackingEvent;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,10 @@ public class ShippingPackageEventsResponseDto {
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean isHoliday;
+    private String funFact;
+    private LocalDateTime deliveredAt;
+    private LocalDate estimatedDeliveryDate;
     private List<TrackingEventPackageResponse> events;
     private int page;
     private int size;
@@ -36,6 +41,10 @@ public class ShippingPackageEventsResponseDto {
         this.status = shippingPackage.getStatus().name();
         this.createdAt = shippingPackage.getCreatedAt();
         this.updatedAt = shippingPackage.getUpdatedAt();
+        this.isHoliday = shippingPackage.getIsHoliday();
+        this.funFact = shippingPackage.getFunFact();
+        this.deliveredAt = shippingPackage.getDeliveredAt();
+        this.estimatedDeliveryDate = shippingPackage.getEstimatedDeliveryDate();
         this.events = eventsPage.getContent().stream().map(TrackingEventPackageResponse::new).toList();
         this.page = eventsPage.getNumber();
         this.size = eventsPage.getSize();

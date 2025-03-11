@@ -1,14 +1,17 @@
 package mercadolivre.processoseletivo.Inbound.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import mercadolivre.processoseletivo.Inbound.entity.ShippingPackage;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ShippingPackageResponseDto {
     private UUID id;
     private String description;
@@ -17,6 +20,10 @@ public class ShippingPackageResponseDto {
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean isHoliday;
+    private String funFact;
+    private LocalDateTime deliveredAt;
+    private LocalDate estimatedDeliveryDate;
 
     public ShippingPackageResponseDto(ShippingPackage shippingPackage) {
         this.id = shippingPackage.getId();
@@ -26,5 +33,9 @@ public class ShippingPackageResponseDto {
         this.status = shippingPackage.getStatus().name();
         this.createdAt = shippingPackage.getCreatedAt();
         this.updatedAt = shippingPackage.getUpdatedAt();
+        this.isHoliday = shippingPackage.getIsHoliday();
+        this.funFact = shippingPackage.getFunFact();
+        this.deliveredAt = shippingPackage.getDeliveredAt();
+        this.estimatedDeliveryDate = shippingPackage.getEstimatedDeliveryDate();
     }
 }

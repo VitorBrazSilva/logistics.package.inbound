@@ -1,7 +1,5 @@
 package mercadolivre.processoseletivo.Inbound.entity;
 
-
-
 import jakarta.persistence.*;
 import lombok.*;
 import mercadolivre.processoseletivo.Inbound.enums.ShippingPackageStatus;
@@ -53,8 +51,10 @@ public class ShippingPackage {
 
     private LocalDate estimatedDeliveryDate;
 
-    private boolean isHoliday;
+    @Column(nullable = true)
+    private Boolean isHoliday;
 
     private String funFact;
+
 
 }
