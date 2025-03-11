@@ -51,10 +51,10 @@ public class ShippingPackage {
 
     private LocalDate estimatedDeliveryDate;
 
-    @Column(nullable = true)
-    private Boolean isHoliday;
-
+    @Column(name = "funFact", columnDefinition = "LONGTEXT")
     private String funFact;
 
+    @Column(nullable = true)
+    private Boolean isHoliday;
 
 }

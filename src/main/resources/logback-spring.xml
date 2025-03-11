@@ -39,4 +39,20 @@
     <root level="INFO">
         <appender-ref ref="JSON" />
     </root>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/performance.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/performance-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%X{traceId}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="mercadolivre.processoseletivo.Inbound" level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+
 </configuration>
