@@ -45,26 +45,45 @@ curl --location 'http://localhost:8080/actuator/health'
 
 ```
 src/main/java/mercadolivre/processoseletivo/Inbound/
-│── client/        # Configurações do projeto (Async, Cache, RabbitMQ, etc.)
+│── client/        # Apis Externas
 │── config/        # Configurações do projeto (Async, Cache, RabbitMQ, etc.)
+│── consumer/      # Consumidor do RabbitMQ
 │── controller/    # Endpoints REST
+│── cron/          # CronJob para expurgo de dados do banco
 │── entity/        # Entidades JPA
+│── enum/          # Enumeradores
+│── mapper/        # Mapeadores de DTO para Entidades
 │── repository/    # Repositórios JPA
 │── service/       # Regras de negócio
 │── util/          # Utilitários, incluindo tratamento global de erros
-│── consumer/      # Consumidores RabbitMQ
-│── cron/          # Jobs agendados para limpeza de dados
 
 ```
 
-Testes
+# Testes
 
-Para rodar os testes unitários:
+## Para rodar os testes unitários:
 
 ```
 mvn test
 ```
 
+## Para rodar os testes de carga:
+
+### 1. Instalar o k6
+
+Windows
+
+```
+choco install k6
+```
+
+### 2. Executar o teste
+na pasta \resources\teste-carga.js se encontra um teste de carga em javascript. Para rodar o script use
+
+```
+k6 run teste-carga.js
+```
+Isso rodará o teste com 100 usuários simultâneos por 30 segundos, conforme o script
 
 # Decisões de Design
 
@@ -92,17 +111,30 @@ As entidades possuem relacionamentos bem definidos e indexação para otimizar c
 # Melhorias Futuras
 
 - Monitoramento avançado: Integrar ferramentas como Prometheus e Grafana para métricas de performance.
-- Tolerância a falhas: Implementar padrões como Circuit Breaker (Resilience4j) para lidar com falhas de serviços externos.
-- Suporte a múltiplas regiões: Replicação de banco e cache distribuído para maior resiliência.
+- Abranger mais testes de unidade
+- Criar testes de integração
+- Fazer cache em consulta no banco de dados
+
+
+# Cron para expurgo de dados
+
+Sistema roda uma cronjob para expurgar os dados e salvar em CSV no diretório 
+```
+\backups\backup-2025-03-10.csv
+```
 
 # Diagrama de Dependência dos serviços
 ![systemDesign](docs/resources/dependencias.png)
 
 # Design System
-![systemDesign](docs/resources/system design.png)
+![systemDesign](docs/resources/systemdesign.png)
 
 # Log do K6 testando cenário de alta carga
 ![systemDesign](docs/resources/k6.png)
+
+# Alguns logs da aplicação rodando async
+são logs de consulta em api externa
+![systemDesign](docs/resources/logs.png)
 
 
 
