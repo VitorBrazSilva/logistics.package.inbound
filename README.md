@@ -32,7 +32,7 @@ git clone <https://github.com/VitorBrazSilva/logistics.package.inbound.git>
 ```
 2. Execute os serviços necessários:
 ```
-
+docker-compose up -d
 ```
 3. Verificar a disponibilidade do serviço através do Healthcheck:
 
@@ -96,13 +96,13 @@ As entidades possuem relacionamentos bem definidos e indexação para otimizar c
 - Suporte a múltiplas regiões: Replicação de banco e cache distribuído para maior resiliência.
 
 # Diagrama de Dependência dos serviços
-![systemDesign](docs\resources\dependencias.png)
+![systemDesign](docs/resources/dependencias.png)
 
 # Design System
-![systemDesign](docs\resources\system design.png)
+![systemDesign](docs/resources/system design.png)
 
 # Log do K6 testando cenário de alta carga
-![systemDesign](docs\resources\k6.png)
+![systemDesign](docs/resources/k6.png)
 
 
 
