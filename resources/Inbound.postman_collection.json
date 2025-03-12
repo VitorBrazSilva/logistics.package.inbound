@@ -1,0 +1,304 @@
+{
+	"info": {
+		"_postman_id": "dd01f2c2-93f9-4d18-b1e4-f6e4b0a316cb",
+		"name": "Inbound",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "544293"
+	},
+	"item": [
+		{
+			"name": "Pacote",
+			"item": [
+				{
+					"name": "Criar novo pacote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>Timestamp</th>\r",
+									"        <th>Status</th>\r",
+									"        <th>Error</th>\r",
+									"        <th>Path</th>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>{{response.timestamp}}</td>\r",
+									"        <td>{{response.status}}</td>\r",
+									"        <td>{{response.error}}</td>\r",
+									"        <td>{{response.path}}</td>\r",
+									"    </tr>\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return { response: pm.response.json() }\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\": \"TESTEEE\",\r\n    \"sender\": \"Vitor\",\r\n    \"recipient\": \"Teste\",\r\n    \"estimatedDeliveryDate\": \"2025-12-25\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/shippingpackage",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"shippingpackage"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/pacotes \\\r\n     -H \"Content-Type: application/json\" \\\r\n     -d '{\r\n         \"description\": \"Livros para entrega\",\r\n         \"sender\": \"Loja ABC\",\r\n         \"recipient\": \"João Silva\",\r\n         \"estimatedDeliveryDate\": \"2025-10-24T00:00:00Z\"\r\n     }'"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar status",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"IN_TRANSIT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/shippingpackage/5705993b-d6b7-4ff3-b003-12fb2a51f79b/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"shippingpackage",
+								"5705993b-d6b7-4ff3-b003-12fb2a51f79b",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Pacotes e Eventos",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/shippingpackage/c0ee526b-1a84-431e-aa41-4f1b48a6143f?includeEvents=true",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"shippingpackage",
+								"c0ee526b-1a84-431e-aa41-4f1b48a6143f"
+							],
+							"query": [
+								{
+									"key": "includeEvents",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Pacotes",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/shippingpackage?sender=Vitor&recipient=teste",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"shippingpackage"
+							],
+							"query": [
+								{
+									"key": "sender",
+									"value": "Vitor"
+								},
+								{
+									"key": "recipient",
+									"value": "teste"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Evento",
+			"item": [
+				{
+					"name": "Criar Eventos",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"ac5aa80b-6f4d-4276-9996-2367550fb947\",\r\n    \"location\": \"Centro de Distribuição BH\",\r\n    \"description\": \"Pacote chegou ao centro de distribuição do BM\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/trackingevent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"trackingevent"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Actuator",
+			"item": [
+				{
+					"name": "HeathCheck",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/actuator/health",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"actuator",
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HikariCP Connections",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/actuator/metrics/hikaricp.connections",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"actuator",
+								"metrics",
+								"hikaricp.connections"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

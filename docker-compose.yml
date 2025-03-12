@@ -10,15 +10,22 @@ services:
       - 'SPRING_DATA_REDIS_HOST=redis'
     ports:
       - '8080:8080'
+    depends_on:
+      - mysql
+      - rabbitmq
+      - redis
+    restart: 'on-failure'
 
   mysql:
-    container_name: 'guide-mysql'
+    container_name: 'mysql'
     image: 'mysql:latest'
     environment:
       - 'MYSQL_DATABASE=mydatabase'
       - 'MYSQL_PASSWORD=secret'
       - 'MYSQL_ROOT_PASSWORD=verysecret'
       - 'MYSQL_USER=myuser'
+    volumes:
+      - ./resources/mysql-init:/docker-entrypoint-initdb.d
     ports:
       - '3306:3306'
 
