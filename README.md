@@ -37,9 +37,7 @@ docker-compose up -d
 3. Verificar a disponibilidade do serviço através do Healthcheck:
 
 ```
-
 curl --location 'http://localhost:8080/actuator/health'
-
 ```
 # Estrutura do Projeto
 
@@ -78,7 +76,7 @@ choco install k6
 ```
 
 ### 2. Executar o teste
-na pasta \resources\teste-carga.js se encontra um teste de carga em javascript. Para rodar o script use
+na pasta \resources\teste-carga.js se encontra um teste de carga em javascript. Para rodar o script
 
 ```
 k6 run teste-carga.js
@@ -100,21 +98,19 @@ As entidades possuem relacionamentos bem definidos e indexação para otimizar c
 
 - Cache com Redis: Reduz a carga no banco de dados ao armazenar informações frequentemente acessadas.
 - Mensageria com RabbitMQ: Processamento assíncrono de eventos para evitar bloqueios na API.
-- Particionamento de Banco: Embora não implementado, uma estratégia futura poderia incluir sharding para distribuir carga.
 
 ## Gestão de Threads e Chamadas Assíncronas
 
-- ExecutorService e Spring Async para tarefas paralelas controladas.
-- ForkJoinPool para cargas massivas de eventos de rastreamento.
+- Spring Async para tarefas paralelas controladas.
 - Job Agendado para expurgo de dados antigos sem impactar a aplicação principal.
   
 # Melhorias Futuras
 
 - Monitoramento avançado: Integrar ferramentas como Prometheus e Grafana para métricas de performance.
+- Particionamento de Banco: Uma estratégia futura poderia incluir sharding para distribuir carga.
 - Abranger mais testes de unidade
 - Criar testes de integração
 - Fazer cache em consulta no banco de dados
-
 
 # Cron para expurgo de dados
 
@@ -133,7 +129,11 @@ Sistema roda uma cronjob para expurgar os dados e salvar em CSV no diretório
 ![systemDesign](docs/resources/k6.png)
 
 # Alguns logs da aplicação rodando async
-são logs de consulta em api externa
+são logs de consulta em api externa. Os logs são salvos de maneira async com limite de tamanho e um TTL.
+Foi feito um log para performance, um log de captura do sistema (INFO, WAR, ERROR) e o mesmo em Json para facilitar subir em uma aplicação como Grafana por exemplo
+```
+\logs
+```
 ![systemDesign](docs/resources/logs.png)
 
 
